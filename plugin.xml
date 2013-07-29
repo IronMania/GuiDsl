@@ -11,8 +11,18 @@
 	
   </extension>
 
- <extension
- 	point="org.eclipse.ui.exportWizards">
- 	</extension>
+ 	<extension 
+       point="org.eclipse.ui.exportWizards"> 
+      <wizard 
+         id="com.xyz.ExportWizard1" 
+         name="Export User Interfaces GuiDSL" 
+         class="de.example.gui.exportPlugin.ExpWizard" 
+         icon="./icons/import1.gif"> 
+         <description> 
+            Export Generated UserInterfaces 
+         </description> 
+         <selection class="org.eclipse.core.resources.IProject"/> 
+      </wizard> 
+   </extension> 
 
 </plugin>
