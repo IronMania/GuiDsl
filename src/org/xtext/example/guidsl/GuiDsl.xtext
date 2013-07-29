@@ -1,0 +1,160 @@
+grammar org.xtext.example.guidsl.GuiDsl with org.eclipse.xtext.common.Terminals
+
+generate guiDsl "http://www.xtext.org/example/guidsl/GuiDsl"
+
+Model:
+	Application;
+
+Application:
+	'App' name=ID'{'
+	'NameSpace' nameSpace = QualifiedName 
+	'StartPage' startPage = [DisplayedPage]
+	pages += DisplayedPage*
+	'}'		
+;
+
+QualifiedName: 
+  ID ('.' ID)*
+;
+
+DisplayedPage:
+	Page| TabBar
+;
+	
+Page:
+	'Page' name=ID
+	'{'
+		appBar = AppBar?
+		layout = LayoutManager?
+	'}'
+;
+
+LayoutManager:
+	Horizontal | Vertical | Grid
+;
+
+Horizontal:
+	'Horizontal' name=ID'{'
+		(elements += Element)*
+	'}'	
+;
+
+Vertical:
+	'Vertical' name=ID'{'
+		(elements += Element)*
+	'}'
+;
+
+Grid:
+	'Grid' name=ID 
+	'{'
+	('Rows' rows = INT)?
+	('Columns' columns = INT)?
+	(elements += Element)*
+	'}'
+;
+
+Element:
+	LayoutManager |
+	Control 
+	
+;
+
+Control:
+	ActiveControl| Label 					//Controls
+;
+
+ActiveControl:
+	Image | InputText | Button				//Active Controls	
+;
+
+Label:
+	
+	'Label'
+	name=ID
+	'{'
+		('Text' text=STRING)?
+	'}';
+
+InputText:
+	
+	'InputText'
+	name=ID
+	'{'
+		('Editable' editable ?= 'editable')?
+		('Text' text=STRING)?
+		(clickEvent=Event)?
+	'}';
+
+Button:
+	'Button'
+	name=ID
+	'{'
+		('Text' text=STRING)?
+		(clickEvent=Event)?
+	'}';
+
+Event:
+	TappedEvent | ChangePage
+;
+
+TappedEvent:
+	'Tapped' name=ID
+;
+
+ChangePage:
+	'ChangePage'
+	name=ID
+	'{'
+		'TargetPage' targetPage=[DisplayedPage]
+	'}'
+;
+
+Image:
+	'Image'
+	name=ID
+	'{'
+		('defaultImage' defaultImage=STRING)?
+		('description' description=STRING)?
+		(clickEvent=Event)?
+	'}';
+
+AppBar:
+	'AppBar''{'
+	(entry += AppBarEntry)*	
+	'}'
+;
+
+AppBarEntry:
+	'AppBarEntry' name=ID'{'
+	'Text' text=STRING
+	('Icon' icon=STRING)?
+	'Importance' importance = APP_BAR_ENTRY_IMPORTANCE
+	('ClickEvent' clickEvent=Event)?
+	'}'
+;
+ 
+TabBar:
+	'TabBar' name=ID'{'
+	('WP7TabType' wp7TabType = WP7_TAB_TYPE)?
+	appBar = AppBar?
+	
+	tabs += Tab+
+	'}'
+;
+
+Tab:
+	'Tab' name=ID'{'
+		'Title' title=STRING 
+		'Icon'	icon=STRING
+		page = Page
+	'}'
+;
+enum APP_BAR_ENTRY_IMPORTANCE:
+//	FREQUENTLY= 'Frequently' |
+	ACTION= 'Action' | 
+	OPTION= 'Option'
+;
+enum WP7_TAB_TYPE:
+	NONE ='none' | PIVOT = 'pivot' | PANORAMA = 'panorama'
+;
